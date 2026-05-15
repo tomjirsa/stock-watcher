@@ -1,27 +1,7 @@
-import json
 import pandas as pd
 import pytest
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 from src.data_service import DataService
-
-PRICE_RESPONSE = {
-    "results": [
-        {"t": 1704067200000, "o": 100.0, "h": 105.0, "l": 99.0, "c": 103.0, "v": 1000000},
-        {"t": 1704153600000, "o": 103.0, "h": 108.0, "l": 102.0, "c": 106.0, "v": 1200000},
-    ]
-}
-
-FUNDAMENTALS_RESPONSE = {
-    "results": {
-        "financials": {
-            "income_statement": {
-                "basic_earnings_per_share": {"value": 2.50},
-                "revenues": {"value": 5000000000},
-            }
-        }
-    }
-}
 
 @pytest.fixture
 def data_service(tmp_path):

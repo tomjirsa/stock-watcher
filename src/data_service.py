@@ -1,9 +1,12 @@
 import json
 import hashlib
+import logging
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from polygon import RESTClient
+
+logger = logging.getLogger(__name__)
 
 
 class DataService:
@@ -84,5 +87,6 @@ class DataService:
             }
             self._write_cache(cache_path, data)
             return data
-        except Exception:
+        except Exception as e:
+            logger.warning(f"Failed to fetch fundamentals for {ticker}: {e}")
             return {}
