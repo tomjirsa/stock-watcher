@@ -1,0 +1,26 @@
+tickers:
+  # Semiconductors
+  - NVDA
+  - AMD
+  - AVGO
+  - TSM
+  # Cloud / Software
+  - MSFT
+  - CRM
+  - SNOW
+  - DDOG
+  # Healthcare / Biotech
+  - LLY
+  - ISRG
+  - DXCM
+  # Consumer / E-commerce
+  - AMZN
+  - SHOP
+  - MELI
+  # Financials / Fintech
+  - V
+  - SQ
+  - NU
+  # EV / Clean Energy
+  - TSLA
+  - ENPH

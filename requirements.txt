@@ -1,0 +1,8 @@
+polygon-api-client==1.14.2
+pandas==2.2.2
+numpy==1.26.4
+streamlit==1.35.0
+python-dotenv==1.0.1
+pyyaml==6.0.1
+pytest==8.2.0
+pytest-mock==3.14.0
