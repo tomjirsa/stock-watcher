@@ -20,7 +20,7 @@ def scanner(tmp_path):
         {"close": [100.0], "volume": [1_000_000.0]}, index=["2024-01-01"]
     )
     data_service.get_fundamentals.return_value = {}
-    return Scanner(data_service=data_service, results_dir=str(tmp_path))
+    return Scanner(data_service=data_service, results_dir=str(tmp_path), request_delay=0)
 
 def test_scanner_runs_all_strategies_against_all_tickers(scanner):
     strategy_a = MagicMock()

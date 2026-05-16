@@ -1,4 +1,5 @@
 import json
+import time
 import yaml
 import logging
 from datetime import date, timedelta
@@ -12,10 +13,11 @@ from src.strategies.fundamental import FundamentalStrategy
 logger = logging.getLogger(__name__)
 
 class Scanner:
-    def __init__(self, data_service: DataService, results_dir: str = "results"):
+    def __init__(self, data_service: DataService, results_dir: str = "results", request_delay: float = 15.0):
         self.data_service = data_service
         self.results_dir = Path(results_dir)
         self.results_dir.mkdir(parents=True, exist_ok=True)
+        self.request_delay = request_delay
         self.strategies: list[Strategy] = [
             MomentumStrategy(),
             FundamentalStrategy(),
@@ -26,7 +28,9 @@ class Scanner:
         from_date = str(date.today() - timedelta(days=400))  # ~280 trading days, covers 200-day MA
         signals = []
 
-        for ticker in tickers:
+        for i, ticker in enumerate(tickers):
+            if i > 0:
+                time.sleep(self.request_delay)
             try:
                 prices = self.data_service.get_price_history(ticker, from_date, today)
                 fundamentals = self.data_service.get_fundamentals(ticker)
