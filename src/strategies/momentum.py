@@ -55,6 +55,8 @@ class MomentumStrategy(Strategy):
         if len(close) < period + 1:
             return None
         delta = close.diff().dropna()
+        if len(delta) < period:
+            return None
         gain = delta.clip(lower=0).rolling(period).mean()
         loss = (-delta.clip(upper=0)).rolling(period).mean()
         if loss.iloc[-1] == 0:
