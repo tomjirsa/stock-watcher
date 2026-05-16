@@ -1,5 +1,4 @@
 import json
-import time
 import yaml
 import logging
 from datetime import date, timedelta
@@ -13,11 +12,10 @@ from src.strategies.fundamental import FundamentalStrategy
 logger = logging.getLogger(__name__)
 
 class Scanner:
-    def __init__(self, data_service: DataService, results_dir: str = "results", request_delay: float = 15.0):
+    def __init__(self, data_service: DataService, results_dir: str = "results"):
         self.data_service = data_service
         self.results_dir = Path(results_dir)
         self.results_dir.mkdir(parents=True, exist_ok=True)
-        self.request_delay = request_delay
         self.strategies: list[Strategy] = [
             MomentumStrategy(),
             FundamentalStrategy(),
@@ -25,12 +23,10 @@ class Scanner:
 
     def run(self, tickers: list[str]) -> list[Signal]:
         today = str(date.today())
-        from_date = str(date.today() - timedelta(days=400))  # ~280 trading days, covers 200-day MA
+        from_date = str(date.today() - timedelta(days=400))
         signals = []
 
-        for i, ticker in enumerate(tickers):
-            if i > 0:
-                time.sleep(self.request_delay)
+        for ticker in tickers:
             try:
                 prices = self.data_service.get_price_history(ticker, from_date, today)
                 fundamentals = self.data_service.get_fundamentals(ticker)
@@ -73,13 +69,8 @@ def load_watchlist(path: str = "config/watchlist.yaml") -> list[str]:
 
 
 if __name__ == "__main__":
-    import os
-    from dotenv import load_dotenv
-    load_dotenv()
     logging.basicConfig(level=logging.INFO)
-
-    api_key = os.environ["POLYGON_API_KEY"]
-    service = DataService(api_key=api_key)
+    service = DataService()
     scanner = Scanner(data_service=service)
     tickers = load_watchlist()
     signals = scanner.run(tickers)

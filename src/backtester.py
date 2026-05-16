@@ -105,14 +105,10 @@ class Backtester:
 
 
 if __name__ == "__main__":
-    import os
     import yaml
-    from dotenv import load_dotenv
-    load_dotenv()
     logging.basicConfig(level=logging.INFO)
 
-    api_key = os.environ["POLYGON_API_KEY"]
-    service = DataService(api_key=api_key)
+    service = DataService()
     backtester = Backtester(data_service=service)
     with open("config/watchlist.yaml") as f:
         tickers = yaml.safe_load(f)["tickers"]
