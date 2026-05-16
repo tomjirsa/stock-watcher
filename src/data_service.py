@@ -2,19 +2,17 @@ import json
 import hashlib
 import logging
 import pandas as pd
+import yfinance as yf
 from datetime import datetime
 from pathlib import Path
-from polygon import RESTClient
 
 logger = logging.getLogger(__name__)
 
 
 class DataService:
-    def __init__(self, api_key: str, cache_dir: str = "data/cache"):
-        self.api_key = api_key
+    def __init__(self, cache_dir: str = "data/cache"):
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self._client = RESTClient(api_key)
 
     def _cache_path(self, key: str) -> Path:
         hashed = hashlib.md5(key.encode()).hexdigest()
@@ -41,21 +39,18 @@ class DataService:
         if cached:
             return pd.DataFrame(cached["rows"], index=cached["index"])
 
-        aggs = self._client.get_aggs(ticker, 1, "day", from_date, to_date)
-        rows = [
-            {
-                "open": a.open,
-                "high": a.high,
-                "low": a.low,
-                "close": a.close,
-                "volume": a.volume,
-            }
-            for a in aggs
-        ]
-        index = [
-            datetime.fromtimestamp(a.timestamp / 1000).strftime("%Y-%m-%d")
-            for a in aggs
-        ]
+        df = yf.download(ticker, start=from_date, end=to_date, auto_adjust=True, progress=False)
+        if df.empty:
+            raise ValueError(f"{ticker}: no price data returned")
+
+        # Flatten MultiIndex columns produced by newer yfinance versions
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+        df.columns = [c.lower() for c in df.columns]
+        df = df[["open", "high", "low", "close", "volume"]]
+
+        index = df.index.strftime("%Y-%m-%d").tolist()
+        rows = df.to_dict("records")
         self._write_cache(cache_path, {"rows": rows, "index": index})
         return pd.DataFrame(rows, index=index)
 
@@ -67,23 +62,14 @@ class DataService:
             return cached
 
         try:
-            results = list(self._client.vx.list_stock_financials(ticker, limit=2))
-            if not results:
-                return {}
-            latest = results[0].financials
-            prev = results[1].financials if len(results) > 1 else None
-
-            latest_eps = latest.income_statement.basic_earnings_per_share.value
-            latest_rev = latest.income_statement.revenues.value
-            prev_eps = prev.income_statement.basic_earnings_per_share.value if prev else None
-            prev_rev = prev.income_statement.revenues.value if prev else None
-
+            info = yf.Ticker(ticker).info
             data = {
-                "eps": latest_eps,
-                "revenue": latest_rev,
-                "eps_growth": ((latest_eps - prev_eps) / abs(prev_eps)) if prev_eps else None,
-                "revenue_growth": ((latest_rev - prev_rev) / abs(prev_rev)) if prev_rev else None,
-                "pe_ratio": None,  # populated separately via snapshot endpoint
+                "eps": info.get("trailingEps"),
+                "revenue": info.get("totalRevenue"),
+                "eps_growth": info.get("earningsGrowth"),
+                "revenue_growth": info.get("revenueGrowth"),
+                "pe_ratio": info.get("trailingPE"),
+                "sector_median_pe": None,
             }
             self._write_cache(cache_path, data)
             return data
