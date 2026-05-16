@@ -1,0 +1,36 @@
+name: Nightly Stock Scan
+
+on:
+  schedule:
+    - cron: "0 21 * * 1-5"  # 21:00 UTC Mon-Fri (after US market close)
+  workflow_dispatch:          # allow manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scanner
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+        run: python src/scanner.py
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add results/
+          git diff --staged --quiet || git commit -m "chore: nightly scan $(date -u +%Y-%m-%d)"
+          git push
