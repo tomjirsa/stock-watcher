@@ -70,7 +70,9 @@ Max score: 1.0. Returns `None` if score == 0.
 | Price within 1% of lower Bollinger Band | +0.20 |
 | RSI(14) between 50–70 | +0.20 |
 | Volume ≥ 120% of 20-day average | +0.15 |
-| Bollinger Band squeeze (bandwidth at 6-month low) | +0.15 |
+| Bollinger Band squeeze (bandwidth at 126-bar rolling minimum) | +0.15 |
+
+The squeeze condition compares the current BBB (bandwidth) value against `bbands['BBB'].rolling(126).min()`. If fewer than 126 bars are available, this condition is skipped.
 
 Requires at least 26 bars of price history (MACD minimum). If `pandas-ta` returns `NaN` for a condition due to insufficient data, that condition is silently skipped.
 
