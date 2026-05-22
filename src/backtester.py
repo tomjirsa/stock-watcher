@@ -119,8 +119,12 @@ class Backtester:
             "strategies": stats,
             "trades": all_trades,
         }
-        (self.output_dir / "latest.json").write_text(json.dumps(output, indent=2))
-        logger.info(f"Backtester wrote {len(all_trades)} trades across {len(tickers)} tickers")
+        payload = json.dumps(output, indent=2)
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        run_path = self.output_dir / f"{timestamp}.json"
+        run_path.write_text(payload)
+        (self.output_dir / "latest.json").write_text(payload)
+        logger.info(f"Backtester wrote {len(all_trades)} trades to {run_path.name}")
 
     def _offset_date(self, date_str: str, days: int) -> str:
         d = datetime.strptime(date_str, "%Y-%m-%d").date()
