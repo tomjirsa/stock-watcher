@@ -10,10 +10,18 @@ from src.models import StockData, Signal
 from src.strategies.base import Strategy
 from src.strategies.technical import TechnicalAnalysisStrategy
 from src.strategies.fundamental import FundamentalStrategy
+from src.strategies.golden_cross import GoldenCrossStrategy
 
 logger = logging.getLogger(__name__)
 
 LOOKBACK_YEARS = 2
+
+STRATEGY_WEIGHTS: dict[str, float] = {
+    "TechnicalAnalysisStrategy": 0.50,
+    "FundamentalStrategy": 0.30,
+    "GoldenCrossStrategy": 0.20,
+}
+COMBINED_THRESHOLD = 0.50
 
 
 class Backtester:
@@ -32,6 +40,7 @@ class Backtester:
         self.strategies: list[Strategy] = [
             TechnicalAnalysisStrategy(),
             FundamentalStrategy(),
+            GoldenCrossStrategy(),
         ]
 
     def run(self, tickers: list[str]) -> None:
@@ -40,7 +49,6 @@ class Backtester:
         to_date = str(today)
 
         all_trades: list[dict] = []
-        strategy_trades: dict[str, list[dict]] = defaultdict(list)
 
         for ticker in tickers:
             try:
@@ -52,54 +60,61 @@ class Backtester:
 
             close = full_prices["close"]
             dates = full_prices.index.tolist()
-            last_entry: dict[str, date] = {}  # strategy -> last entry date
+            last_entry: date | None = None
 
             for i in range(200, len(dates)):
-                snapshot_prices = full_prices.iloc[:i]
-                stock = StockData(ticker=ticker, prices=snapshot_prices, fundamentals=fundamentals)
                 signal_date_str = dates[i - 1]
                 signal_date = datetime.strptime(signal_date_str, "%Y-%m-%d").date()
 
+                if last_entry is not None and (signal_date - last_entry).days < self.hold_days:
+                    continue
+
+                snapshot_prices = full_prices.iloc[:i]
+                stock = StockData(ticker=ticker, prices=snapshot_prices, fundamentals=fundamentals)
+
+                fired: dict[str, Signal] = {}
                 for strategy in self.strategies:
-                    signal = strategy.scan(stock)
-                    if not signal:
-                        continue
+                    sig = strategy.scan(stock)
+                    if sig:
+                        fired[sig.strategy] = sig
 
-                    strat_name = signal.strategy
-                    prev = last_entry.get(strat_name)
-                    if prev is not None and (signal_date - prev).days < self.hold_days:
-                        continue  # still within hold period
+                combined_score = sum(
+                    sig.score * STRATEGY_WEIGHTS.get(name, 0.0)
+                    for name, sig in fired.items()
+                )
 
-                    last_entry[strat_name] = signal_date
-                    forward_30 = self._forward_return(close, i, 30)
-                    forward_60 = self._forward_return(close, i, 60)
-                    forward_90 = self._forward_return(close, i, 90)
+                if combined_score < COMBINED_THRESHOLD:
+                    continue
 
-                    trade = {
-                        "ticker": ticker,
-                        "strategy": strat_name,
-                        "score": signal.score,
-                        "entry_date": signal_date_str,
-                        "exit_date_30d": self._offset_date(signal_date_str, 30),
-                        "exit_date_60d": self._offset_date(signal_date_str, 60),
-                        "exit_date_90d": self._offset_date(signal_date_str, 90),
-                        "forward_return_30d": forward_30,
-                        "forward_return_60d": forward_60,
-                        "forward_return_90d": forward_90,
-                    }
-                    all_trades.append(trade)
-                    strategy_trades[strat_name].append(trade)
+                last_entry = signal_date
+                all_reasons = [r for sig in fired.values() for r in sig.reasons]
 
-        stats = {
-            name: self._compute_stats(trades)
-            for name, trades in strategy_trades.items()
-        }
+                trade = {
+                    "ticker": ticker,
+                    "strategy": "CombinedSignal",
+                    "strategies_fired": sorted(fired.keys()),
+                    "score": round(combined_score, 4),
+                    "reasons": all_reasons,
+                    "entry_date": signal_date_str,
+                    "exit_date_30d": self._offset_date(signal_date_str, 30),
+                    "exit_date_60d": self._offset_date(signal_date_str, 60),
+                    "exit_date_90d": self._offset_date(signal_date_str, 90),
+                    "forward_return_30d": self._forward_return(close, i, 30),
+                    "forward_return_60d": self._forward_return(close, i, 60),
+                    "forward_return_90d": self._forward_return(close, i, 90),
+                }
+                all_trades.append(trade)
+
+        combined_trades = [t for t in all_trades if t["strategy"] == "CombinedSignal"]
+        stats = {"CombinedSignal": self._compute_stats(combined_trades)}
 
         output = {
             "generated": str(today),
             "config": {
                 "hold_days": self.hold_days,
                 "investment_per_trade": self.investment_per_trade,
+                "weights": STRATEGY_WEIGHTS,
+                "threshold": COMBINED_THRESHOLD,
             },
             "strategies": stats,
             "trades": all_trades,
