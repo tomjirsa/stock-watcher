@@ -1,4 +1,8 @@
 # app/main.py
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import json
 from datetime import date, timedelta
 import streamlit as st
