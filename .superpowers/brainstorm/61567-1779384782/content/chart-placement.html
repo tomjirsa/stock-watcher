@@ -1,0 +1,53 @@
+<h2>Where should the TA chart overlays appear?</h2>
+<p class="subtitle">The Streamlit app currently has two tabs. Where should the indicator charts live?</p>
+
+<div class="options">
+
+  <div class="option" data-choice="signals-tab" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Signals tab — drill-down chart</h3>
+      <p>When you click a signal row in the table, show a full price chart with TA overlays below it. Currently clicking a signal only shows score + reasons text. This adds the chart there.</p>
+      <div class="mockup" style="margin-top:0.75rem; font-size:0.8rem;">
+        <div class="mockup-header">Signals Tab (after clicking a row)</div>
+        <div class="mockup-body" style="padding:0.5rem;">
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">
+            <span style="background:#2ecc71;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.7rem;">AAPL — MomentumStrategy</span>
+            <span style="background:#3498db;color:#fff;padding:2px 6px;border-radius:4px;font-size:0.7rem;">Score: 0.70</span>
+          </div>
+          <div style="background:#1a1a2e;border-radius:4px;height:60px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:0.7rem;">📈 Price + Bollinger Bands + VWAP</div>
+          <div style="background:#1a1a2e;border-radius:4px;height:30px;margin-top:4px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:0.7rem;">📊 MACD panel</div>
+          <div style="background:#1a1a2e;border-radius:4px;height:30px;margin-top:4px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:0.7rem;">📉 RSI panel (14)</div>
+        </div>
+      </div>
+      <p class="label" style="margin-top:0.5rem;">Pros: indicator chart is contextual to the signal that fired</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="backtest-tab" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Backtest tab — enhance existing chart</h3>
+      <p>The backtest tab already has a price chart with buy/sell markers when a ticker is selected. Add TA overlays to that existing chart.</p>
+      <div class="mockup" style="margin-top:0.75rem; font-size:0.8rem;">
+        <div class="mockup-header">Backtest Tab — Single Ticker View</div>
+        <div class="mockup-body" style="padding:0.5rem;">
+          <div style="background:#1a1a2e;border-radius:4px;height:70px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:0.7rem;">📈 Price + BB + VWAP + Buy▲ Sell▼ markers</div>
+          <div style="background:#1a1a2e;border-radius:4px;height:30px;margin-top:4px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:0.7rem;">📊 MACD panel</div>
+          <div style="background:#1a1a2e;border-radius:4px;height:30px;margin-top:4px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:0.7rem;">📉 RSI panel (14)</div>
+        </div>
+      </div>
+      <p class="label" style="margin-top:0.5rem;">Pros: see signals in context of the backtest hold period</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="both-tabs" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Both tabs</h3>
+      <p>Add the TA chart to the signals drill-down AND enhance the backtest chart. The indicator computation is shared — only the display differs between tabs.</p>
+      <p class="label">Most complete, slightly more UI work — but shared charting logic means low extra effort once the first chart is done</p>
+    </div>
+  </div>
+
+</div>

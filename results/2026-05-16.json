@@ -1,0 +1,303 @@
+{
+  "date": "2026-05-16",
+  "signals": [
+    {
+      "ticker": "NVDA",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 95.6% YoY (threshold: >15%)",
+        "Revenue growth 73.2% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "AMD",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 91.2% YoY (threshold: >15%)",
+        "Revenue growth 37.8% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "AVGO",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 31.6% YoY (threshold: >15%)",
+        "Revenue growth 29.5% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "TSM",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 58.4% YoY (threshold: >15%)",
+        "Revenue growth 35.1% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "MSFT",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 23.4% YoY (threshold: >15%)",
+        "Revenue growth 18.3% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "CRM",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 17.9% YoY (threshold: >15%)",
+        "Revenue growth 12.1% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "DDOG",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 104.0% YoY (threshold: >15%)",
+        "Revenue growth 32.2% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "LLY",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 169.9% YoY (threshold: >15%)",
+        "Revenue growth 55.5% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "ISRG",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 18.8% YoY (threshold: >15%)",
+        "Revenue growth 23.0% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "DXCM",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 92.2% YoY (threshold: >15%)",
+        "Revenue growth 15.0% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "AMZN",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 74.8% YoY (threshold: >15%)",
+        "Revenue growth 16.6% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "V",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 35.5% YoY (threshold: >15%)",
+        "Revenue growth 17.1% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "NU",
+      "strategy": "FundamentalStrategy",
+      "score": 0.75,
+      "reasons": [
+        "EPS growth 60.9% YoY (threshold: >15%)",
+        "Revenue growth 43.9% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "DXCM",
+      "strategy": "MomentumStrategy",
+      "score": 0.6,
+      "reasons": [
+        "RSI at 50.5 (trending, not overbought)",
+        "Volume 11,132,600 is 105% above 20-day avg"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "NVDA",
+      "strategy": "MomentumStrategy",
+      "score": 0.5,
+      "reasons": [
+        "MA50 (193.07) above MA200 (185.97)",
+        "RSI at 56.2 (trending, not overbought)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "AMD",
+      "strategy": "MomentumStrategy",
+      "score": 0.5,
+      "reasons": [
+        "MA50 (279.21) above MA200 (224.19)",
+        "RSI at 67.6 (trending, not overbought)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "AVGO",
+      "strategy": "MomentumStrategy",
+      "score": 0.5,
+      "reasons": [
+        "MA50 (369.40) above MA200 (346.83)",
+        "RSI at 52.5 (trending, not overbought)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "AMZN",
+      "strategy": "MomentumStrategy",
+      "score": 0.5,
+      "reasons": [
+        "MA50 (236.71) above MA200 (229.42)",
+        "RSI at 53.9 (trending, not overbought)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "ENPH",
+      "strategy": "MomentumStrategy",
+      "score": 0.5,
+      "reasons": [
+        "MA50 (37.67) above MA200 (36.44)",
+        "Volume 20,302,100 is 140% above 20-day avg"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "SNOW",
+      "strategy": "FundamentalStrategy",
+      "score": 0.35,
+      "reasons": [
+        "Revenue growth 30.1% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "SHOP",
+      "strategy": "FundamentalStrategy",
+      "score": 0.35,
+      "reasons": [
+        "Revenue growth 34.3% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "MELI",
+      "strategy": "FundamentalStrategy",
+      "score": 0.35,
+      "reasons": [
+        "Revenue growth 49.0% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "TSLA",
+      "strategy": "FundamentalStrategy",
+      "score": 0.35,
+      "reasons": [
+        "Revenue growth 15.8% YoY (threshold: >10%)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "MSFT",
+      "strategy": "MomentumStrategy",
+      "score": 0.3,
+      "reasons": [
+        "Volume 50,771,160 is 47% above 20-day avg"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "SNOW",
+      "strategy": "MomentumStrategy",
+      "score": 0.3,
+      "reasons": [
+        "RSI at 64.6 (trending, not overbought)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "SHOP",
+      "strategy": "MomentumStrategy",
+      "score": 0.3,
+      "reasons": [
+        "Volume 15,842,200 is 21% above 20-day avg"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "V",
+      "strategy": "MomentumStrategy",
+      "score": 0.3,
+      "reasons": [
+        "RSI at 62.5 (trending, not overbought)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "NU",
+      "strategy": "MomentumStrategy",
+      "score": 0.3,
+      "reasons": [
+        "Volume 138,779,800 is 218% above 20-day avg"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "TSLA",
+      "strategy": "MomentumStrategy",
+      "score": 0.3,
+      "reasons": [
+        "RSI at 66.7 (trending, not overbought)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "TSM",
+      "strategy": "MomentumStrategy",
+      "score": 0.2,
+      "reasons": [
+        "MA50 (367.59) above MA200 (313.73)"
+      ],
+      "date": "2026-05-16"
+    },
+    {
+      "ticker": "LLY",
+      "strategy": "MomentumStrategy",
+      "score": 0.2,
+      "reasons": [
+        "MA50 (938.59) above MA200 (918.39)"
+      ],
+      "date": "2026-05-16"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+<h2>Which TA indicators do you want to add?</h2>
+<p class="subtitle">These will become both signal generators and chart overlays. Select all that interest you.</p>
+
+<div class="options" data-multiselect>
+
+  <div class="option" data-choice="macd" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>MACD</h3>
+      <p>Moving Average Convergence/Divergence — signals trend changes via MACD line crossing the signal line. Shown as a separate panel below the price chart.</p>
+      <p class="label">Signal: MACD crossover (bullish when MACD crosses above signal line)</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="bbands" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Bollinger Bands</h3>
+      <p>Upper/lower bands ±2 std devs from a 20-day MA. Squeeze (bands narrowing) signals a potential breakout. Overlaid directly on the price chart.</p>
+      <p class="label">Signal: Band squeeze or price touching lower band (mean reversion)</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="rsi_visual" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>RSI Visual Panel</h3>
+      <p>RSI(14) is already used in MomentumStrategy — this adds a dedicated RSI panel on the chart so you can see it visually. No new strategy needed.</p>
+      <p class="label">Visual only — RSI logic already exists in MomentumStrategy</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="vwap" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>VWAP</h3>
+      <p>Volume-Weighted Average Price — key intraday level used by institutions. Price above VWAP = bullish bias. Overlaid on the price chart.</p>
+      <p class="label">Signal: Price crossing above VWAP with strong volume</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 1.5rem;">You can select multiple. Or type your own in the terminal.</p>

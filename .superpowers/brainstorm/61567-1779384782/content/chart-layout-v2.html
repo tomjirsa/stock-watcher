@@ -1,0 +1,122 @@
+<h2>Chart Layout — Light Background</h2>
+<p class="subtitle">Plotly <code>template="plotly_white"</code> with light panel backgrounds.</p>
+
+<div class="mockup">
+  <div class="mockup-header">AAPL — TechnicalAnalysisStrategy &nbsp;|&nbsp; Score: 0.85</div>
+  <div class="mockup-body" style="padding: 0.75rem; font-family: monospace; font-size: 0.78rem; background:#f5f5f5;">
+
+    <!-- EMA period control -->
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.6rem;font-size:0.75rem;color:#555;">
+      <span>EMA period:</span>
+      <span style="background:#fff;border:1px solid #ccc;padding:2px 10px;border-radius:4px;color:#333;">20</span>
+      <span style="color:#aaa;">← UI number input, default 20</span>
+    </div>
+
+    <!-- Row 1: Price chart -->
+    <div style="background:#ffffff;border:1px solid #ddd;border-radius:6px;padding:0.5rem;margin-bottom:4px;">
+      <div style="color:#666;font-size:0.7rem;margin-bottom:0.3rem;">Price &nbsp;•&nbsp; Bollinger Bands &nbsp;•&nbsp; EMA(20)</div>
+      <div style="position:relative;height:120px;overflow:hidden;">
+        <svg viewBox="0 0 400 100" style="width:100%;height:100%;" preserveAspectRatio="none">
+          <!-- BB fill -->
+          <polygon points="0,15 50,12 100,18 150,10 200,8 250,14 300,16 350,12 400,10 400,72 350,74 300,68 250,72 200,80 150,75 100,65 50,72 0,70"
+            fill="#2980b9" opacity="0.07"/>
+          <!-- BB upper band -->
+          <polyline points="0,15 50,12 100,18 150,10 200,8 250,14 300,16 350,12 400,10"
+            fill="none" stroke="#2980b9" stroke-width="1" stroke-dasharray="4,2" opacity="0.6"/>
+          <!-- BB lower band -->
+          <polyline points="0,70 50,72 100,65 150,75 200,80 250,72 300,68 350,74 400,72"
+            fill="none" stroke="#2980b9" stroke-width="1" stroke-dasharray="4,2" opacity="0.6"/>
+          <!-- BB mid line -->
+          <polyline points="0,42 50,42 100,41 150,42 200,44 250,43 300,42 350,43 400,41"
+            fill="none" stroke="#2980b9" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.35"/>
+          <!-- EMA(20) -->
+          <polyline points="0,55 50,52 100,48 150,46 200,43 250,41 300,40 350,38 400,36"
+            fill="none" stroke="#e67e22" stroke-width="1.5" opacity="0.9"/>
+          <!-- Price line -->
+          <polyline points="0,60 50,55 100,50 150,48 200,42 250,44 300,38 350,35 400,30"
+            fill="none" stroke="#1a73e8" stroke-width="2"/>
+          <!-- Buy marker -->
+          <polygon points="80,45 85,55 75,55" fill="#27ae60" opacity="0.95"/>
+          <!-- Sell marker -->
+          <polygon points="320,23 325,33 315,33" fill="#e74c3c" opacity="0.95" transform="rotate(180,320,28)"/>
+        </svg>
+        <div style="position:absolute;bottom:2px;right:6px;font-size:0.65rem;color:#888;">
+          <span style="color:#1a73e8;">— Price</span> &nbsp;
+          <span style="color:#2980b9;opacity:0.8;">- - BB Bands</span> &nbsp;
+          <span style="color:#e67e22;">— EMA(20)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: MACD panel -->
+    <div style="background:#ffffff;border:1px solid #ddd;border-radius:6px;padding:0.5rem;margin-bottom:4px;">
+      <div style="color:#666;font-size:0.7rem;margin-bottom:0.3rem;">MACD(12,26,9) &nbsp;•&nbsp; histogram &nbsp;•&nbsp; signal line</div>
+      <div style="height:55px;overflow:hidden;">
+        <svg viewBox="0 0 400 50" style="width:100%;height:100%;" preserveAspectRatio="none">
+          <!-- Zero line -->
+          <line x1="0" y1="25" x2="400" y2="25" stroke="#ccc" stroke-width="0.7"/>
+          <!-- Negative histogram bars -->
+          <rect x="0" y="22" width="12" height="3" fill="#e74c3c" opacity="0.6"/>
+          <rect x="15" y="20" width="12" height="5" fill="#e74c3c" opacity="0.6"/>
+          <rect x="30" y="18" width="12" height="7" fill="#e74c3c" opacity="0.6"/>
+          <rect x="45" y="21" width="12" height="4" fill="#e74c3c" opacity="0.6"/>
+          <rect x="60" y="23" width="12" height="2" fill="#e74c3c" opacity="0.6"/>
+          <!-- Positive histogram bars -->
+          <rect x="75" y="24" width="12" height="1" fill="#27ae60" opacity="0.6"/>
+          <rect x="90" y="22" width="12" height="3" fill="#27ae60" opacity="0.6"/>
+          <rect x="105" y="19" width="12" height="6" fill="#27ae60" opacity="0.6"/>
+          <rect x="120" y="17" width="12" height="8" fill="#27ae60" opacity="0.6"/>
+          <rect x="135" y="15" width="12" height="10" fill="#27ae60" opacity="0.6"/>
+          <rect x="150" y="14" width="12" height="11" fill="#27ae60" opacity="0.6"/>
+          <rect x="165" y="13" width="12" height="12" fill="#27ae60" opacity="0.6"/>
+          <rect x="180" y="12" width="12" height="13" fill="#27ae60" opacity="0.6"/>
+          <rect x="195" y="11" width="12" height="14" fill="#27ae60" opacity="0.6"/>
+          <rect x="210" y="10" width="12" height="15" fill="#27ae60" opacity="0.6"/>
+          <!-- MACD line -->
+          <polyline points="0,24 75,25 90,23 150,15 210,10 280,8 350,7 400,6"
+            fill="none" stroke="#1a73e8" stroke-width="1.5"/>
+          <!-- Signal line -->
+          <polyline points="0,25 75,26 90,25 150,18 210,13 280,11 350,9 400,8"
+            fill="none" stroke="#e74c3c" stroke-width="1.5"/>
+          <!-- Crossover marker -->
+          <circle cx="80" cy="25" r="3" fill="#27ae60"/>
+        </svg>
+        <div style="font-size:0.65rem;color:#888;margin-top:2px;">
+          <span style="color:#1a73e8;">— MACD</span> &nbsp;
+          <span style="color:#e74c3c;">— Signal</span> &nbsp;
+          <span style="color:#27ae60;">● Crossover</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: RSI panel -->
+    <div style="background:#ffffff;border:1px solid #ddd;border-radius:6px;padding:0.5rem;">
+      <div style="color:#666;font-size:0.7rem;margin-bottom:0.3rem;">RSI(14)</div>
+      <div style="height:40px;overflow:hidden;">
+        <svg viewBox="0 0 400 40" style="width:100%;height:100%;" preserveAspectRatio="none">
+          <!-- Overbought 70 -->
+          <line x1="0" y1="10" x2="400" y2="10" stroke="#e74c3c" stroke-width="0.7" stroke-dasharray="3,2" opacity="0.6"/>
+          <!-- Oversold 30 -->
+          <line x1="0" y1="30" x2="400" y2="30" stroke="#27ae60" stroke-width="0.7" stroke-dasharray="3,2" opacity="0.6"/>
+          <!-- RSI shaded zone 50-70 -->
+          <polygon points="100,25 150,22 200,18 250,16 300,15 350,17 400,16 400,20 350,20 300,20 250,20 200,20 150,20 100,20"
+            fill="#8e44ad" opacity="0.08"/>
+          <!-- RSI line -->
+          <polyline points="0,32 50,28 100,25 150,22 200,18 250,16 300,15 350,17 400,16"
+            fill="none" stroke="#8e44ad" stroke-width="1.5"/>
+        </svg>
+        <div style="font-size:0.65rem;color:#888;margin-top:1px;">
+          <span style="color:#e74c3c;opacity:0.8;">-- 70 overbought</span> &nbsp;
+          <span style="color:#27ae60;opacity:0.8;">-- 30 oversold</span> &nbsp;
+          <span style="color:#8e44ad;">— RSI(14)</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:0.5rem;font-size:0.7rem;color:#888;">
+      Shared x-axis across all panels. Buy ▲ Sell ▼ markers shown in backtest tab only.
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:1rem;">Does this look right? Plotly will use <code>template="plotly_white"</code> with white panel backgrounds.</p>

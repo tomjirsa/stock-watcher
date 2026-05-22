@@ -1,0 +1,64 @@
+<h2>How should the TA layer be structured?</h2>
+<p class="subtitle">Three approaches — all use <code>pandas-ta</code> as the library. The difference is where indicator math lives.</p>
+
+<div class="options">
+
+  <div class="option" data-choice="inline" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Inline — each layer computes its own</h3>
+      <p>Strategies call <code>pandas-ta</code> directly. The Streamlit app also calls <code>pandas-ta</code> directly for chart rendering. Minimal structural change.</p>
+      <div style="font-family:monospace;font-size:0.75rem;background:#0d0d1a;padding:0.6rem;border-radius:4px;margin-top:0.5rem;color:#ccc;">
+        src/strategies/macd.py → df.ta.macd()<br>
+        src/strategies/bbands.py → df.ta.bbands()<br>
+        app/main.py → df.ta.macd(), df.ta.bbands(), df.ta.ema()<br>
+        <span style="color:#e74c3c;">⚠ Same math in two places</span>
+      </div>
+      <div class="pros-cons" style="margin-top:0.5rem;font-size:0.8rem;">
+        <div class="pros"><h4>Pros</h4><ul><li>Fewest new files</li><li>No new abstractions</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Indicator math duplicated</li><li>Harder to unit-test in isolation</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="shared-module" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Shared <code>src/indicators.py</code> module <span style="color:#f1c40f;font-size:0.75rem;">★ Recommended</span></h3>
+      <p>A single module with pure functions: <code>compute_macd()</code>, <code>compute_bbands()</code>, <code>compute_ema()</code>, <code>compute_rsi()</code>. Strategies and the Streamlit app both import from it.</p>
+      <div style="font-family:monospace;font-size:0.75rem;background:#0d0d1a;padding:0.6rem;border-radius:4px;margin-top:0.5rem;color:#ccc;">
+        src/indicators.py  ← math lives here<br>
+        src/strategies/macd.py → from src.indicators import compute_macd<br>
+        src/strategies/bbands.py → from src.indicators import compute_bbands<br>
+        app/main.py → from src.indicators import compute_macd, compute_ema …<br>
+        <span style="color:#2ecc71;">✓ Single source of truth</span>
+      </div>
+      <div class="pros-cons" style="margin-top:0.5rem;font-size:0.8rem;">
+        <div class="pros"><h4>Pros</h4><ul><li>DRY — change once, both layers update</li><li>Easy to unit-test indicators in isolation</li><li>Natural place to add new indicators</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>One extra file</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="enriched-stockdata" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Pre-compute on <code>StockData</code></h3>
+      <p><code>StockData</code> gets an <code>indicators</code> field. The Scanner (or DataService) computes all indicators before running strategies. Strategies just read <code>stock.indicators['macd']</code>.</p>
+      <div style="font-family:monospace;font-size:0.75rem;background:#0d0d1a;padding:0.6rem;border-radius:4px;margin-top:0.5rem;color:#ccc;">
+        src/models.py → StockData(indicators=…)<br>
+        src/scanner.py → stock.indicators = compute_all(prices)<br>
+        src/strategies/*.py → stock.indicators['macd_line']<br>
+        app/main.py → fetches separately (UI has own data pipeline)<br>
+        <span style="color:#e74c3c;">⚠ UI still needs its own compute path</span>
+      </div>
+      <div class="pros-cons" style="margin-top:0.5rem;font-size:0.8rem;">
+        <div class="pros"><h4>Pros</h4><ul><li>Strategies don't import TA library directly</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Computes all indicators even when unused</li><li>UI still needs a separate compute path</li><li>DataService/Scanner scope grows</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:1.5rem;">Library: <strong>pandas-ta</strong> in all three. Pure Python, no C binaries, native pandas DataFrame integration (<code>df.ta.macd()</code> etc.).</p>

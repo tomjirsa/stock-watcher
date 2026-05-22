@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest
 from src.indicators import compute_macd, compute_bbands, compute_rsi, compute_ema
 
 
@@ -45,6 +44,12 @@ def test_compute_macd_returns_empty_dataframe_with_insufficient_data():
 
 # --- compute_bbands ---
 
+def test_compute_bbands_returns_empty_dataframe_with_insufficient_data():
+    result = compute_bbands(make_prices(5))
+    assert isinstance(result, pd.DataFrame)
+    assert "BBU_20_2.0" in result.columns
+    assert len(result) == 0
+
 def test_compute_bbands_returns_dataframe():
     result = compute_bbands(make_prices(50))
     assert isinstance(result, pd.DataFrame)
@@ -70,6 +75,12 @@ def test_compute_bbands_mid_between_upper_and_lower():
 
 # --- compute_rsi ---
 
+def test_compute_rsi_returns_empty_series_with_insufficient_data():
+    result = compute_rsi(make_prices(5))
+    assert isinstance(result, pd.Series)
+    assert len(result) == 0
+
+
 def test_compute_rsi_returns_series():
     result = compute_rsi(make_prices(50))
     assert isinstance(result, pd.Series)
@@ -88,18 +99,24 @@ def test_compute_rsi_values_between_0_and_100():
 
 # --- compute_ema ---
 
+def test_compute_ema_returns_empty_series_with_insufficient_data():
+    result = compute_ema(make_prices(5), length=20)
+    assert isinstance(result, pd.Series)
+    assert len(result) == 0
+
+
 def test_compute_ema_returns_series():
-    result = compute_ema(make_prices(50), period=20)
+    result = compute_ema(make_prices(50), length=20)
     assert isinstance(result, pd.Series)
 
 
 def test_compute_ema_last_bar_not_nan_with_sufficient_data():
-    result = compute_ema(make_prices(50), period=20)
+    result = compute_ema(make_prices(50), length=20)
     assert not pd.isna(result.iloc[-1])
 
 
 def test_compute_ema_tracks_price_direction():
     prices = make_prices(50)  # monotonically increasing
-    result = compute_ema(prices, period=20)
+    result = compute_ema(prices, length=20)
     # EMA of an increasing series is itself increasing
     assert result.iloc[-1] > result.iloc[-20]

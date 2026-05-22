@@ -8,6 +8,7 @@ from src.models import StockData, Signal
 from src.strategies.base import Strategy
 from src.strategies.momentum import MomentumStrategy
 from src.strategies.fundamental import FundamentalStrategy
+from src.strategies.golden_cross import GoldenCrossStrategy
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,7 @@ class Scanner:
         self.strategies: list[Strategy] = [
             MomentumStrategy(),
             FundamentalStrategy(),
+            GoldenCrossStrategy(),
         ]
 
     def run(self, tickers: list[str]) -> list[Signal]:
