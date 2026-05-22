@@ -6,7 +6,7 @@ from pathlib import Path
 from src.data_service import DataService
 from src.models import StockData, Signal
 from src.strategies.base import Strategy
-from src.strategies.momentum import MomentumStrategy
+from src.strategies.technical import TechnicalAnalysisStrategy
 from src.strategies.fundamental import FundamentalStrategy
 from src.strategies.golden_cross import GoldenCrossStrategy
 
@@ -18,7 +18,7 @@ class Scanner:
         self.results_dir = Path(results_dir)
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.strategies: list[Strategy] = [
-            MomentumStrategy(),
+            TechnicalAnalysisStrategy(),
             FundamentalStrategy(),
             GoldenCrossStrategy(),
         ]

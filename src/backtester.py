@@ -8,7 +8,7 @@ from pathlib import Path
 from src.data_service import DataService
 from src.models import StockData, Signal
 from src.strategies.base import Strategy
-from src.strategies.momentum import MomentumStrategy
+from src.strategies.technical import TechnicalAnalysisStrategy
 from src.strategies.fundamental import FundamentalStrategy
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class Backtester:
         self.hold_days = hold_days
         self.investment_per_trade = investment_per_trade
         self.strategies: list[Strategy] = [
-            MomentumStrategy(),
+            TechnicalAnalysisStrategy(),
             FundamentalStrategy(),
         ]
 
