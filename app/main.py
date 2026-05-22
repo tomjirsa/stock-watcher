@@ -400,18 +400,19 @@ with tab_backtest:
                     raw_max = pd.to_datetime(table_df[exit_date_col].max()) if exit_date_col in table_df else pd.Timestamp.now()
                     max_date = (raw_max + pd.Timedelta(days=10)).strftime("%Y-%m-%d")
 
+                    ema_period_bt = st.number_input(
+                        "EMA period", min_value=5, max_value=200, value=20, step=5, key="backtest_ema"
+                    )
+
                     with st.spinner(f"Loading {bt_ticker_filter} price history…"):
                         prices = load_price_history(bt_ticker_filter, min_date, max_date)
 
-                    fig = go.Figure()
-
-                    if not prices.empty:
-                        fig.add_trace(go.Scatter(
-                            x=prices.index, y=prices["close"],
-                            mode="lines", name="Price",
-                            line=dict(color="#3498db", width=1.5),
-                            hovertemplate="%{x|%Y-%m-%d}: $%{y:.2f}<extra></extra>",
-                        ))
+                    fig = build_ta_chart(prices, int(ema_period_bt))
+                    fig.update_layout(
+                        title=f"{bt_ticker_filter} — Trade History ({horizon} hold)",
+                        height=600,
+                        hovermode="closest",
+                    )
 
                     for _, t in table_df.iterrows():
                         entry_dt = pd.to_datetime(t["entry_date"])
@@ -443,6 +444,7 @@ with tab_backtest:
                                 x0=entry_dt, x1=exit_dt,
                                 fillcolor=bar_color, opacity=0.12,
                                 layer="below", line_width=0,
+                                row=1, col=1,
                             )
 
                         # Buy marker
@@ -461,7 +463,7 @@ with tab_backtest:
                                     "<extra></extra>"
                                 ),
                                 showlegend=False,
-                            ))
+                            ), row=1, col=1)
 
                         # Sell marker
                         if sell_price is not None and exit_dt is not None:
@@ -481,19 +483,16 @@ with tab_backtest:
                                     "<extra></extra>"
                                 ),
                                 showlegend=False,
-                            ))
+                            ), row=1, col=1)
 
                     # Single legend entries
                     fig.add_trace(go.Scatter(x=[None], y=[None], mode="markers",
-                        marker=dict(symbol="triangle-up", color="#2ecc71", size=12), name="Buy"))
+                        marker=dict(symbol="triangle-up", color="#2ecc71", size=12), name="Buy"),
+                        row=1, col=1)
                     fig.add_trace(go.Scatter(x=[None], y=[None], mode="markers",
-                        marker=dict(symbol="triangle-down", color="#e74c3c", size=12), name="Sell"))
+                        marker=dict(symbol="triangle-down", color="#e74c3c", size=12), name="Sell"),
+                        row=1, col=1)
 
-                    fig.update_layout(
-                        title=f"{bt_ticker_filter} — Trade History ({horizon} hold)",
-                        xaxis_title="Date", yaxis_title="Price ($)",
-                        hovermode="closest", height=480,
-                    )
                     st.plotly_chart(fig, use_container_width=True)
 
             # Table below chart
