@@ -1,11 +1,14 @@
 # app/main.py
 import json
+from datetime import date, timedelta
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 import yfinance as yf
 from pathlib import Path
+from src.indicators import compute_macd, compute_bbands, compute_rsi, compute_ema
 
 
 @st.cache_data(show_spinner=False)
@@ -18,6 +21,90 @@ def load_price_history(ticker: str, start: str, end: str) -> pd.DataFrame:
     df.columns = [c.lower() for c in df.columns]
     df.index = pd.to_datetime(df.index)
     return df
+
+def build_ta_chart(prices: pd.DataFrame, ema_period: int = 20) -> go.Figure:
+    macd_df = compute_macd(prices)
+    bb_df = compute_bbands(prices)
+    rsi_s = compute_rsi(prices)
+    ema_s = compute_ema(prices, length=ema_period)
+
+    fig = make_subplots(
+        rows=3, cols=1,
+        shared_xaxes=True,
+        row_heights=[0.6, 0.25, 0.15],
+        vertical_spacing=0.03,
+    )
+
+    # Row 1 — price line
+    fig.add_trace(go.Scatter(
+        x=prices.index, y=prices["close"],
+        mode="lines", name="Price",
+        line=dict(color="#1a73e8", width=1.5),
+        hovertemplate="%{x|%Y-%m-%d}: $%{y:.2f}<extra></extra>",
+    ), row=1, col=1)
+
+    # Row 1 — Bollinger Bands
+    if "BBU_20_2.0" in bb_df.columns:
+        for col, label, dash, show in [
+            ("BBU_20_2.0", "BB Bands", "dash", True),
+            ("BBM_20_2.0", "BB Mid",   "dot",  False),
+            ("BBL_20_2.0", "BB Lower", "dash", False),
+        ]:
+            fig.add_trace(go.Scatter(
+                x=prices.index, y=bb_df[col],
+                mode="lines", name=label, showlegend=show,
+                line=dict(color="#2980b9", width=1, dash=dash),
+            ), row=1, col=1)
+
+    # Row 1 — EMA
+    if not ema_s.empty:
+        fig.add_trace(go.Scatter(
+            x=prices.index, y=ema_s,
+            mode="lines", name=f"EMA({ema_period})",
+            line=dict(color="#e67e22", width=1.5),
+        ), row=1, col=1)
+
+    # Row 2 — MACD histogram + lines
+    if "MACDh_12_26_9" in macd_df.columns:
+        hist = macd_df["MACDh_12_26_9"]
+        colors = ["#27ae60" if (not pd.isna(v) and v >= 0) else "#e74c3c" for v in hist]
+        fig.add_trace(go.Bar(
+            x=prices.index, y=hist,
+            name="MACD Hist", marker_color=colors, showlegend=False,
+        ), row=2, col=1)
+    if "MACD_12_26_9" in macd_df.columns:
+        fig.add_trace(go.Scatter(
+            x=prices.index, y=macd_df["MACD_12_26_9"],
+            mode="lines", name="MACD", line=dict(color="#1a73e8", width=1.5),
+        ), row=2, col=1)
+    if "MACDs_12_26_9" in macd_df.columns:
+        fig.add_trace(go.Scatter(
+            x=prices.index, y=macd_df["MACDs_12_26_9"],
+            mode="lines", name="Signal", line=dict(color="#e74c3c", width=1.5),
+        ), row=2, col=1)
+
+    # Row 3 — RSI
+    if not rsi_s.empty:
+        fig.add_trace(go.Scatter(
+            x=prices.index, y=rsi_s,
+            mode="lines", name="RSI(14)", line=dict(color="#8e44ad", width=1.5),
+        ), row=3, col=1)
+        fig.add_hline(y=70, line_dash="dash", line_color="#e74c3c", line_width=0.8, row=3, col=1)
+        fig.add_hline(y=30, line_dash="dash", line_color="#27ae60", line_width=0.8, row=3, col=1)
+
+    fig.update_layout(
+        template="plotly_white",
+        height=520,
+        hovermode="x unified",
+        showlegend=True,
+        xaxis3_title="Date",
+        yaxis_title="Price ($)",
+        yaxis2_title="MACD",
+        yaxis3_title="RSI",
+        margin=dict(t=10, b=10),
+    )
+    return fig
+
 
 RESULTS_DIR = Path("results")
 BACKTEST_PATH = RESULTS_DIR / "backtest" / "latest.json"
@@ -54,7 +141,7 @@ with tab_signals:
     with st.sidebar:
         st.subheader("Filters")
         selected_date = st.selectbox("Scan date", dates)
-        strategy_filter = st.selectbox("Strategy", ["All", "GoldenCrossStrategy", "MomentumStrategy", "FundamentalStrategy"])
+        strategy_filter = st.selectbox("Strategy", ["All", "TechnicalAnalysisStrategy", "GoldenCrossStrategy", "FundamentalStrategy"])
         min_score = st.slider("Minimum score", 0.0, 1.0, 0.0, 0.05)
 
     data = load_scan_results(selected_date)
@@ -86,6 +173,22 @@ with tab_signals:
             st.write("**Why this signal fired:**")
             for reason in signal["reasons"]:
                 st.write(f"- {reason}")
+
+            st.divider()
+            ema_period = st.number_input(
+                "EMA period", min_value=5, max_value=200, value=20, step=5, key="signals_ema"
+            )
+            chart_start = str((date.today() - timedelta(days=400)))
+            chart_end = str(date.today())
+            with st.spinner(f"Loading {signal['ticker']} chart…"):
+                chart_prices = load_price_history(signal["ticker"], chart_start, chart_end)
+            if chart_prices.empty:
+                st.warning(f"Could not load price history for {signal['ticker']}.")
+            else:
+                st.plotly_chart(
+                    build_ta_chart(chart_prices, int(ema_period)),
+                    use_container_width=True,
+                )
 
 with tab_backtest:
     st.header("Backtest Results")
