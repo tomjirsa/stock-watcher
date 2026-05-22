@@ -12,7 +12,7 @@ def test_stock_data_holds_ticker_prices_and_fundamentals():
 def test_signal_fields():
     signal = Signal(
         ticker="NVDA",
-        strategy="MomentumStrategy",
+        strategy="TechnicalAnalysisStrategy",
         score=0.85,
         reasons=["Golden cross detected", "RSI at 62"],
         date="2024-01-02",
