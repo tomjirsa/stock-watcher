@@ -156,21 +156,68 @@ def _read_backtest_config() -> dict:
     except FileNotFoundError:
         return {}
 
+dates = get_available_dates()
+bt_file_config = _read_backtest_config()
+
+with st.sidebar:
+    st.subheader("Signals")
+    if dates:
+        selected_date = st.selectbox("Scan date", dates)
+        strategy_filter = st.selectbox(
+            "Strategy",
+            ["All", "TechnicalAnalysisStrategy", "GoldenCrossStrategy", "FundamentalStrategy"],
+        )
+        min_score = st.slider("Minimum score", 0.0, 1.0, 0.0, 0.05)
+    else:
+        st.info("No scan results found.")
+        selected_date = None
+        strategy_filter = "All"
+        min_score = 0.0
+
+    st.divider()
+
+    st.subheader("Backtest")
+    hold_days_input = st.number_input(
+        "Hold period (days)",
+        min_value=1, max_value=365,
+        value=int(bt_file_config.get("hold_days", 90)),
+        step=5,
+        help="Minimum calendar days between re-entries for the same ticker.",
+    )
+    investment = st.number_input(
+        "Investment per trade ($)",
+        min_value=1.0,
+        value=float(bt_file_config.get("investment_per_trade", 1000.0)),
+        step=100.0,
+    )
+    run_clicked = st.button("Run Backtest", type="primary", use_container_width=True)
+
+if run_clicked:
+    with st.spinner("Running backtest… this may take a few minutes"):
+        try:
+            with open("config/watchlist.yaml") as _f:
+                _tickers = yaml.safe_load(_f)["tickers"]
+            _svc = DataService()
+            _bt_runner = Backtester(
+                data_service=_svc,
+                hold_days=int(hold_days_input),
+                investment_per_trade=float(investment),
+            )
+            _bt_runner.run(_tickers)
+            load_backtest_results.clear()
+            st.success("Backtest complete!")
+        except Exception as _e:
+            st.error(f"Backtest failed: {_e}")
+    st.rerun()
+
 tab_signals, tab_backtest = st.tabs(["Signals", "Backtest"])
 
 with tab_signals:
     st.header("Stock Signals")
 
-    dates = get_available_dates()
     if not dates:
         st.info("No scan results found. Run the scanner first: `python src/scanner.py`")
         st.stop()
-
-    with st.sidebar:
-        st.subheader("Filters")
-        selected_date = st.selectbox("Scan date", dates)
-        strategy_filter = st.selectbox("Strategy", ["All", "TechnicalAnalysisStrategy", "GoldenCrossStrategy", "FundamentalStrategy"])
-        min_score = st.slider("Minimum score", 0.0, 1.0, 0.0, 0.05)
 
     data = load_scan_results(selected_date)
     signals = data.get("signals", [])
@@ -220,50 +267,6 @@ with tab_signals:
 
 with tab_backtest:
     st.header("Backtest")
-
-    # --- Configuration ---
-    bt_file_config = _read_backtest_config()
-    with st.expander("Configuration", expanded=True):
-        cfg_col1, cfg_col2, cfg_col3 = st.columns([2, 2, 1])
-        with cfg_col1:
-            hold_days_input = st.number_input(
-                "Hold period (days)",
-                min_value=1, max_value=365,
-                value=int(bt_file_config.get("hold_days", 90)),
-                step=5,
-                help="Minimum calendar days between re-entries for the same ticker.",
-            )
-        with cfg_col2:
-            investment = st.number_input(
-                "Investment per trade ($)",
-                min_value=1.0,
-                value=float(bt_file_config.get("investment_per_trade", 1000.0)),
-                step=100.0,
-            )
-        with cfg_col3:
-            st.write("")
-            st.write("")
-            run_clicked = st.button("Run Backtest", type="primary", use_container_width=True)
-
-    if run_clicked:
-        with st.spinner("Running backtest… this may take a few minutes"):
-            try:
-                with open("config/watchlist.yaml") as _f:
-                    _tickers = yaml.safe_load(_f)["tickers"]
-                _svc = DataService()
-                _bt_runner = Backtester(
-                    data_service=_svc,
-                    hold_days=int(hold_days_input),
-                    investment_per_trade=float(investment),
-                )
-                _bt_runner.run(_tickers)
-                load_backtest_results.clear()
-                st.success("Backtest complete!")
-            except Exception as _e:
-                st.error(f"Backtest failed: {_e}")
-        st.rerun()
-
-    st.divider()
 
     # --- Run selector ---
     runs = get_available_backtest_runs()
