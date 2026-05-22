@@ -74,11 +74,13 @@ def squeeze_bbands(n: int) -> pd.DataFrame:
 
 
 def neutral_rsi(n: int) -> pd.Series:
-    return pd.Series([45.0] * n)  # below 50, no signal
+    """RSI below 50 — no signal."""
+    return pd.Series([45.0] * n)
 
 
 def in_range_rsi(n: int) -> pd.Series:
-    return pd.Series([60.0] * n)  # between 50 and 70
+    """RSI between 50 and 70 — signal triggered."""
+    return pd.Series([60.0] * n)
 
 
 # --- insufficient data ---

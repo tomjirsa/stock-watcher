@@ -20,7 +20,6 @@ class TechnicalAnalysisStrategy(Strategy):
         bb_df = compute_bbands(prices)
         rsi_s = compute_rsi(prices)
 
-        # MACD bullish crossover (+0.30)
         if "MACD_12_26_9" in macd_df.columns:
             macd_line = macd_df["MACD_12_26_9"]
             signal_line = macd_df["MACDs_12_26_9"]
@@ -37,7 +36,6 @@ class TechnicalAnalysisStrategy(Strategy):
                     f" crossed above signal({signal_line.iloc[-1]:.4f})"
                 )
 
-        # Price within 1% of lower Bollinger Band (+0.20)
         if "BBL_20_2.0" in bb_df.columns:
             lower = bb_df["BBL_20_2.0"].iloc[-1]
             close = prices["close"].iloc[-1]
@@ -47,14 +45,12 @@ class TechnicalAnalysisStrategy(Strategy):
                     f"Price ({close:.2f}) within 1% of lower Bollinger Band ({lower:.2f})"
                 )
 
-        # RSI(14) between 50–70 (+0.20)
         if not rsi_s.empty:
             rsi_val = rsi_s.iloc[-1]
             if not pd.isna(rsi_val) and 50 <= rsi_val <= 70:
                 score += 0.20
                 reasons.append(f"RSI(14) at {rsi_val:.1f} (trending, not overbought)")
 
-        # Volume ≥ 120% of 20-day average (+0.15)
         volume = prices["volume"]
         avg_vol = volume.rolling(20).mean().iloc[-1]
         last_vol = volume.iloc[-1]
@@ -63,7 +59,6 @@ class TechnicalAnalysisStrategy(Strategy):
             pct = (last_vol / avg_vol - 1) * 100
             reasons.append(f"Volume ({last_vol:,.0f}) is {pct:.0f}% above 20-day avg")
 
-        # Bollinger Band squeeze — bandwidth at 126-bar rolling minimum (+0.15)
         if "BBB_20_2.0" in bb_df.columns:
             bbb = bb_df["BBB_20_2.0"]
             rolling_min = bbb.rolling(126).min()
